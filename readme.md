@@ -5,7 +5,6 @@ This Python script extracts ASCII and Unicode strings from a Portable Executable
 Before using this tool, make sure you have the following prerequisites installed:
 
 - PEfile
-- YARA
 - Gibberish Detector
 
 You can install these prerequisites using the following commands:
