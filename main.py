@@ -21,6 +21,7 @@ def generate_yara_rules(strings, detect_gibberish=False):
     """
     Generates yara rules for the extracted strings.
     """
+    
     yara_rules = []
     Detector = False
     if detect_gibberish:
@@ -31,8 +32,9 @@ def generate_yara_rules(strings, detect_gibberish=False):
         gib = 6
         if detect_gibberish:
             gib = Detector.calculate_probability_of_being_gibberish(string)
-        if len(string) >= 6 and gib < 4.2 and string != "This program cannot be run in DOS mode."  and gib != 0:
-            print(f'[+] String: {string} {gib}')
+        if (detect_gibberish and gib < 4.2 and gib != 0) or not detect_gibberish:            
+            string = string.strip()
+            print(f'[+] String: {string}')
             count += 1
             yara_rule = f"""
 rule string_{count}
@@ -54,9 +56,9 @@ def main():
         """
         parser = argparse.ArgumentParser(description="Extracts strings from a PE file and generates yara rules.")
         parser.add_argument("pe_file", help="Path to the PE file.")
+        parser.add_argument("output", help="Path to the output file.")
         parser.add_argument("-d", "--detect_gibberish", action="store_true", help="Detects gibberish strings.")
         parser.add_argument("-l", "--min_length", type=int, default=6, help="Minimum length of the string.")
-        parser.add_argument("-o", "--output", help="Path to the output file.")
         args = parser.parse_args()
         detect_gibberish = args.detect_gibberish
         min_length = args.min_length
