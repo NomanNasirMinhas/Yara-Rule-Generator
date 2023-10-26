@@ -21,22 +21,23 @@ Or you can simply run
 ## Usage
 You can use this tool to extract strings from a PE file and generate YARA rules. The basic usage is as follows:
 
-``python main.py <path_to_pe_file> <output_file> [-d] [-l <min_length>]``
+``python main.py <path_to_pe_file> <output_file> [-g] [-t] [-l]``
 
 
 ``<path_to_pe_file>``: The path to the PE file you want to analyze.
 
 ``<output_file>``: The path to the output file where the generated YARA rules will be saved.
 
-``-d or --detect_gibberish``: Use this flag to enable gibberish detection and filtering. (Optional)
+``-g or --detect_gibberish``: Use this flag to enable gibberish detection and filtering. (Optional)
 
+``-t or --threshold``: Specify the threshold for gibberish words (default is 4.2). Lower value is more strict checks. (Optional)
 
-``-l <min_length> or --min_length <min_length>``: Specify the minimum length of strings to extract (default is 6). (Optional)
+``-l or --min_length``: Specify the minimum length of strings to extract (default is 6). (Optional)
 
 ## Example
 Here is an example of how to use the tool:
 
-``python main .py malware.exe output.yar -d -l 8``
+``python main.py malware.exe output.yar -g -t 5.1 -l 8``
 
 In this example, the tool will analyze the "malware.exe" file, enable gibberish detection, and only extract strings with a minimum length of 8 characters. The generated YARA rules will be saved in the "output.yar" file.
 

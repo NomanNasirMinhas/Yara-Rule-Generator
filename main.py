@@ -17,7 +17,7 @@ def extract_strings(pe, min_length=6):
         strings.extend(unicode_strings)
     return strings
 
-def generate_yara_rules(strings, detect_gibberish=False):
+def generate_yara_rules(strings, detect_gibberish=False, threshold=4.2):
     """
     Generates yara rules for the extracted strings.
     """
@@ -32,7 +32,7 @@ def generate_yara_rules(strings, detect_gibberish=False):
         gib = 6
         if detect_gibberish:
             gib = Detector.calculate_probability_of_being_gibberish(string)
-        if (detect_gibberish and gib < 4.2 and gib != 0) or not detect_gibberish:            
+        if (detect_gibberish and gib < threshold and gib != 0) or not detect_gibberish:            
             string = string.strip()
             print(f'[+] String: {string}')
             count += 1
@@ -57,15 +57,17 @@ def main():
         parser = argparse.ArgumentParser(description="Extracts strings from a PE file and generates yara rules.")
         parser.add_argument("pe_file", help="Path to the PE file.")
         parser.add_argument("output", help="Path to the output file.")
-        parser.add_argument("-d", "--detect_gibberish", action="store_true", help="Detects gibberish strings.")
+        parser.add_argument("-g", "--detect_gibberish", action="store_true", help="Detects gibberish strings.")
         parser.add_argument("-l", "--min_length", type=int, default=6, help="Minimum length of the string.")
+        parser.add_argument("-t", "--threshold", type=float, default=4.2, help="Threshold for gibberish detection. Default is 4.2.")
+        
         args = parser.parse_args()
         detect_gibberish = args.detect_gibberish
         min_length = args.min_length
         pe = pefile.PE(args.pe_file)
         output = args.output
         strings = extract_strings(pe, min_length)
-        yara_rules = generate_yara_rules(strings, detect_gibberish)
+        yara_rules = generate_yara_rules(strings, detect_gibberish, args.threshold)
         
         #Store generate yara rules in a file overwriting the previous one
         with open(output, "w") as f:
